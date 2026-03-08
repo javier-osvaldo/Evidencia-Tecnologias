@@ -1,19 +1,7 @@
-import { useEffect, useState } from "react";
+import Home from './Home'
 
 function App() {
-  const [mensaje, setMensaje] = useState("");
-
-  useEffect(() => {
-    fetch("http://127.0.0.1:8000/mensaje")
-      .then(res => res.json())
-      .then(data => setMensaje(data.mensaje));
-  }, []);
-
-  return (
-    <div>
-      <h1>{mensaje}</h1>
-    </div>
-  );
+  return <Home />
 }
 
-export default App;
+export default App
