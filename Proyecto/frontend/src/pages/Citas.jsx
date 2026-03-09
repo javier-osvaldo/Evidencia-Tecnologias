@@ -3,24 +3,73 @@ import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 
 const DOCTORS = [
-  { id: 7, nombre: 'Dra. Juan David Tirado' },
-  { id: 8, nombre: 'Dr. Yanely Sanchez Lopez' },
-  { id: 9, nombre: 'Dra. Javier Osvaldo Losoya Osornio' },
+  { id: 7, nombre: 'Dr. Juan David Tirado' },
+  { id: 8, nombre: 'Dra. Yanely Sanchez Lopez' },
+  { id: 9, nombre: 'Dr. Javier Osvaldo Losoya Osornio' },
 ]
+
+const s = {
+  // Layout general
+  wrapper: { fontFamily: "system-ui, sans-serif", paddingTop: "8px" },
+
+  // Tabs
+  tabs: { display: "flex", gap: "8px", borderBottom: "1.5px solid #e5e7eb", paddingBottom: "14px", marginBottom: "28px" },
+  tabActive:   { padding: "8px 20px", borderRadius: "999px", border: "none", fontWeight: "700", fontSize: "14px", cursor: "pointer", backgroundColor: "#0891b2", color: "#ffffff" },
+  tabInactive: { padding: "8px 20px", borderRadius: "999px", border: "none", fontWeight: "700", fontSize: "14px", cursor: "pointer", backgroundColor: "transparent", color: "#4b5563" },
+
+  // Formulario
+  formGroup: { marginBottom: "20px" },
+  label: { display: "block", fontSize: "13px", fontWeight: "600", color: "#374151", marginBottom: "8px" },
+  input: { width: "100%", padding: "10px 14px", border: "1.5px solid #d1d5db", borderRadius: "8px", fontSize: "14px", color: "#111827", backgroundColor: "#ecfeff", outline: "none" },
+  select: { width: "100%", padding: "10px 14px", border: "1.5px solid #d1d5db", borderRadius: "8px", fontSize: "14px", color: "#111827", backgroundColor: "#ecfeff", outline: "none" },
+
+  // Horarios
+  horariosTitle: { fontSize: "13px", fontWeight: "600", color: "#374151", marginBottom: "12px" },
+  horariosGrid: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "10px", marginBottom: "20px" },
+  horarioLibre: { padding: "10px 0", borderRadius: "8px", border: "1.5px solid #a5f3fc", fontSize: "13px", fontWeight: "600", cursor: "pointer", backgroundColor: "#ecfeff", color: "#0e7490", textAlign: "center" },
+  horarioOcupado: { padding: "10px 0", borderRadius: "8px", border: "1.5px solid #fecaca", fontSize: "13px", fontWeight: "600", cursor: "not-allowed", backgroundColor: "#fef2f2", color: "#fca5a5", textDecorationLine: "line-through", textAlign: "center" },
+  horarioSeleccionado: { padding: "10px 0", borderRadius: "8px", border: "1.5px solid #0891b2", fontSize: "13px", fontWeight: "600", cursor: "pointer", backgroundColor: "#0891b2", color: "#ffffff", textAlign: "center", transform: "scale(1.05)" },
+
+  // Botones
+  btnConfirmar: { width: "100%", padding: "12px", borderRadius: "999px", border: "none", fontWeight: "700", fontSize: "15px", cursor: "pointer", backgroundColor: "#0891b2", color: "#ffffff", marginTop: "8px" },
+  btnConfirmarDisabled: { width: "100%", padding: "12px", borderRadius: "999px", border: "none", fontWeight: "700", fontSize: "15px", cursor: "not-allowed", backgroundColor: "#e5e7eb", color: "#9ca3af", marginTop: "8px" },
+  btnCancelar: { fontSize: "13px", color: "#ef4444", background: "none", border: "none", cursor: "pointer", fontWeight: "600" },
+
+  // Alertas
+  alertSuccess: { padding: "10px 14px", borderRadius: "8px", fontSize: "13px", marginBottom: "16px", backgroundColor: "#f0fdf4", border: "1px solid #bbf7d0", color: "#16a34a" },
+  alertError:   { padding: "10px 14px", borderRadius: "8px", fontSize: "13px", marginBottom: "16px", backgroundColor: "#fef2f2", border: "1px solid #fecaca", color: "#dc2626" },
+
+  // Cita card
+  citaCard: { border: "1.5px solid #e5e7eb", borderRadius: "12px", padding: "18px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", marginBottom: "12px" },
+  citaDoctor: { fontWeight: "700", fontSize: "15px", color: "#111827", marginBottom: "4px" },
+  citaFecha:  { fontSize: "13px", color: "#4b5563" },
+  citaMotivo: { fontSize: "12px", color: "#9ca3af", marginTop: "2px" },
+
+  // Badges
+  badgePending:  { fontSize: "11px", fontWeight: "700", padding: "4px 10px", borderRadius: "999px", backgroundColor: "#fef9c3", color: "#a16207", whiteSpace: "nowrap" },
+  badgeAttended: { fontSize: "11px", fontWeight: "700", padding: "4px 10px", borderRadius: "999px", backgroundColor: "#dcfce7", color: "#15803d", whiteSpace: "nowrap" },
+  badgeCanceled: { fontSize: "11px", fontWeight: "700", padding: "4px 10px", borderRadius: "999px", backgroundColor: "#fee2e2", color: "#dc2626", whiteSpace: "nowrap" },
+
+  // Empty state
+  empty: { textAlign: "center", color: "#9ca3af", padding: "40px 0", fontSize: "14px" },
+
+  // Loading
+  loading: { fontSize: "13px", color: "#9ca3af", padding: "8px 0" },
+}
 
 export default function Citas({ onClose }) {
   const { user } = useAuth()
-  const [vista, setVista]         = useState('agendar') // 'agendar' | 'mis-citas'
-  const [doctorId, setDoctorId]   = useState('')
-  const [fecha, setFecha]         = useState('')
-  const [horarios, setHorarios]   = useState([])
+  const [vista, setVista]                       = useState('agendar')
+  const [doctorId, setDoctorId]                 = useState('')
+  const [fecha, setFecha]                       = useState('')
+  const [horarios, setHorarios]                 = useState([])
   const [horaSeleccionada, setHoraSeleccionada] = useState('')
-  const [motivo, setMotivo]       = useState('')
-  const [misCitas, setMisCitas]   = useState([])
-  const [mensaje, setMensaje]     = useState('')
-  const [loadingH, setLoadingH]   = useState(false)
+  const [motivo, setMotivo]                     = useState('')
+  const [misCitas, setMisCitas]                 = useState([])
+  const [mensaje, setMensaje]                   = useState('')
+  const [mensajeTipo, setMensajeTipo]           = useState('') // 'success' | 'error'
+  const [loadingH, setLoadingH]                 = useState(false)
 
-  // Fecha mínima = hoy
   const hoy = new Date().toISOString().split('T')[0]
 
   // Cargar horarios cuando cambia doctor o fecha
@@ -36,30 +85,25 @@ export default function Citas({ onClose }) {
 
   // Cargar mis citas
   useEffect(() => {
-    if (vista === 'mis-citas') {
-      api.get('/citas/mis-citas')
-        .then(res => setMisCitas(res.data.citas))
-        .catch(() => setMisCitas([]))
-    }
+    if (vista !== 'mis-citas') return
+    api.get('/citas/mis-citas')
+      .then(res => setMisCitas(res.data.citas))
+      .catch(() => setMisCitas([]))
   }, [vista])
 
   const agendarCita = async () => {
     setMensaje('')
     try {
-      await api.post('/citas', {
-        doctor_id: doctorId,
-        fecha,
-        hora: horaSeleccionada,
-        motivo,
-      })
+      await api.post('/citas', { doctor_id: doctorId, fecha, hora: horaSeleccionada, motivo })
       setMensaje('¡Cita agendada exitosamente!')
+      setMensajeTipo('success')
       setHoraSeleccionada('')
       setMotivo('')
-      // Recargar horarios
       const res = await api.get('/horarios', { params: { doctor_id: doctorId, fecha } })
       setHorarios(res.data)
     } catch (e) {
-      setMensaje(e.response?.data?.mensaje || 'Error al agendar')
+      setMensaje(e.response?.data?.mensaje || 'Error al agendar la cita')
+      setMensajeTipo('error')
     }
   }
 
@@ -70,48 +114,38 @@ export default function Citas({ onClose }) {
     } catch {}
   }
 
-  const estadoColor = (estado) => ({
-    pendiente: 'bg-yellow-100 text-yellow-700',
-    atendida:  'bg-green-100 text-green-700',
-    cancelada: 'bg-red-100 text-red-600',
-  }[estado] || '')
+  const badgeStyle = (estado) => ({
+    pendiente: s.badgePending,
+    atendida:  s.badgeAttended,
+    cancelada: s.badgeCanceled,
+  }[estado] || s.badgePending)
+
+  const horarioStyle = (h) => {
+    if (!h.disponible) return s.horarioOcupado
+    if (horaSeleccionada === h.hora) return s.horarioSeleccionado
+    return s.horarioLibre
+  }
 
   return (
-    <div className="space-y-4">
+    <div style={s.wrapper}>
+
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-gray-100 pb-3">
-        <button
-          onClick={() => setVista('agendar')}
-          className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
-            vista === 'agendar'
-              ? 'bg-cyan-500 text-white'
-              : 'text-gray-500 hover:text-cyan-600'
-          }`}
-        >
+      <div style={s.tabs}>
+        <button style={vista === 'agendar' ? s.tabActive : s.tabInactive} onClick={() => setVista('agendar')}>
           Agendar cita
         </button>
-        <button
-          onClick={() => setVista('mis-citas')}
-          className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
-            vista === 'mis-citas'
-              ? 'bg-cyan-500 text-white'
-              : 'text-gray-500 hover:text-cyan-600'
-          }`}
-        >
+        <button style={vista === 'mis-citas' ? s.tabActive : s.tabInactive} onClick={() => setVista('mis-citas')}>
           Mis citas
         </button>
       </div>
 
-      {/* Agendar */}
+      {/* ── Agendar ── */}
       {vista === 'agendar' && (
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Doctor</label>
-            <select
-              value={doctorId}
-              onChange={e => setDoctorId(e.target.value)}
-              className="w-full px-3 py-2 bg-cyan-50 border border-cyan-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400"
-            >
+        <div>
+          {/* Doctor */}
+          <div style={s.formGroup}>
+            <label style={s.label}>Doctor</label>
+            <select style={s.select} value={doctorId} onChange={e => setDoctorId(e.target.value)}>
               <option value="">Seleccione un doctor</option>
               {DOCTORS.map(d => (
                 <option key={d.id} value={d.id}>{d.nombre}</option>
@@ -119,39 +153,32 @@ export default function Citas({ onClose }) {
             </select>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Fecha</label>
+          {/* Fecha */}
+          <div style={s.formGroup}>
+            <label style={s.label}>Fecha</label>
             <input
               type="date"
               min={hoy}
               value={fecha}
               onChange={e => setFecha(e.target.value)}
-              className="w-full px-3 py-2 bg-cyan-50 border border-cyan-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              style={s.input}
             />
           </div>
 
           {/* Horarios */}
           {doctorId && fecha && (
-            <div>
-              <label className="block text-sm font-medium text-gray-600 mb-2">
-                Horario disponible
-              </label>
+            <div style={s.formGroup}>
+              <p style={s.horariosTitle}>Horarios disponibles</p>
               {loadingH ? (
-                <p className="text-sm text-gray-400">Cargando horarios...</p>
+                <p style={s.loading}>Cargando horarios...</p>
               ) : (
-                <div className="grid grid-cols-4 gap-2">
+                <div style={s.horariosGrid}>
                   {horarios.map(h => (
                     <button
                       key={h.hora}
                       disabled={!h.disponible}
                       onClick={() => h.disponible && setHoraSeleccionada(h.hora)}
-                      className={`py-2 rounded-lg text-sm font-semibold transition-all ${
-                        !h.disponible
-                          ? 'bg-red-100 text-red-400 cursor-not-allowed line-through'
-                          : horaSeleccionada === h.hora
-                          ? 'bg-cyan-500 text-white shadow-md scale-105'
-                          : 'bg-cyan-50 text-cyan-700 hover:bg-cyan-100 border border-cyan-200'
-                      }`}
+                      style={horarioStyle(h)}
                     >
                       {h.hora}
                     </button>
@@ -161,69 +188,55 @@ export default function Citas({ onClose }) {
             </div>
           )}
 
+          {/* Motivo */}
           {horaSeleccionada && (
-            <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
-                Motivo de consulta (opcional)
-              </label>
+            <div style={s.formGroup}>
+              <label style={s.label}>Motivo de consulta (opcional)</label>
               <input
                 type="text"
                 value={motivo}
                 onChange={e => setMotivo(e.target.value)}
                 placeholder="Ej: Revisión general"
-                className="w-full px-3 py-2 bg-cyan-50 border border-cyan-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                style={s.input}
               />
             </div>
           )}
 
+          {/* Mensaje */}
           {mensaje && (
-            <div className={`text-sm px-3 py-2 rounded-lg ${
-              mensaje.includes('exitosamente')
-                ? 'bg-green-50 text-green-600 border border-green-200'
-                : 'bg-red-50 text-red-600 border border-red-200'
-            }`}>
+            <div style={mensajeTipo === 'success' ? s.alertSuccess : s.alertError}>
               {mensaje}
             </div>
           )}
 
+          {/* Botón confirmar */}
           <button
             onClick={agendarCita}
             disabled={!horaSeleccionada}
-            className="w-full py-2.5 bg-cyan-500 hover:bg-cyan-600 disabled:bg-gray-200 disabled:text-gray-400 text-white font-bold rounded-full transition-colors"
+            style={horaSeleccionada ? s.btnConfirmar : s.btnConfirmarDisabled}
           >
             Confirmar cita
           </button>
         </div>
       )}
 
-      {/* Mis citas */}
+      {/* ── Mis citas ── */}
       {vista === 'mis-citas' && (
-        <div className="space-y-3">
+        <div>
           {misCitas.length === 0 ? (
-            <p className="text-center text-gray-400 py-6">No tienes citas registradas.</p>
+            <p style={s.empty}>No tienes citas registradas.</p>
           ) : (
             misCitas.map(cita => (
-              <div key={cita.id} className="border border-gray-100 rounded-xl p-4 flex items-center justify-between gap-4">
+              <div key={cita.id} style={s.citaCard}>
                 <div>
-                  <p className="font-semibold text-gray-800">
-                    {cita.doctor?.nombre || 'Doctor'}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {cita.fecha} — {cita.hora?.slice(0,5)}
-                  </p>
-                  {cita.motivo && (
-                    <p className="text-xs text-gray-400 mt-0.5">{cita.motivo}</p>
-                  )}
+                  <p style={s.citaDoctor}>{cita.doctor?.nombre || 'Doctor'}</p>
+                  <p style={s.citaFecha}>{cita.fecha} — {cita.hora?.slice(0, 5)}</p>
+                  {cita.motivo && <p style={s.citaMotivo}>{cita.motivo}</p>}
                 </div>
-                <div className="flex flex-col items-end gap-2">
-                  <span className={`text-xs font-bold px-2 py-1 rounded-full ${estadoColor(cita.estado)}`}>
-                    {cita.estado}
-                  </span>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px" }}>
+                  <span style={badgeStyle(cita.estado)}>{cita.estado}</span>
                   {cita.estado === 'pendiente' && (
-                    <button
-                      onClick={() => cancelarCita(cita.id)}
-                      className="text-xs text-red-500 hover:underline"
-                    >
+                    <button onClick={() => cancelarCita(cita.id)} style={s.btnCancelar}>
                       Cancelar
                     </button>
                   )}
