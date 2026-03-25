@@ -11,15 +11,15 @@ class DoctorSeeder extends Seeder
     {
         Doctor::insert([
             [
-                'nombre'         => 'Dra. Juann David tirado',
-                'especialidad'   => 'Cardiologoyu1| 8',
+                'nombre'         => 'Dr. Juan David tirado',
+                'especialidad'   => 'Cardiologo',
                 'horario_inicio' => '08:00:00',
                 'horario_fin'    => '18:00:00',
                 'created_at'     => now(),
                 'updated_at'     => now(),
             ],
             [
-                'nombre'         => 'Dr. Yanely Sanchez Lopez',
+                'nombre'         => 'Dra. Yanely Sanchez Lopez',
                 'especialidad'   => 'Anestesiolodia',
                 'horario_inicio' => '08:00:00',
                 'horario_fin'    => '18:00:00',
@@ -27,7 +27,7 @@ class DoctorSeeder extends Seeder
                 'updated_at'     => now(),
             ],
             [
-                'nombre'         => 'Dra. Javier Osvaldo Losoya Osornio',
+                'nombre'         => 'Dr. Javier Osvaldo Losoya Osornio',
                 'especialidad'   => 'Pediatría',
                 'horario_inicio' => '08:00:00',
                 'horario_fin'    => '18:00:00',
