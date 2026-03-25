@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+//Modelos que importara el controlador
 use App\Models\Appointment;
 use App\Models\Doctor;
 use App\Models\Patient;
