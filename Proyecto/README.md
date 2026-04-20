@@ -115,6 +115,7 @@ Se necesitan **dos terminales abiertas al mismo tiempo**.
 cd backend
 php artisan serve
 ```
+php backend/artisan serve
 
 El servidor quedará corriendo en: `http://127.0.0.1:8000`
 
@@ -123,7 +124,9 @@ El servidor quedará corriendo en: `http://127.0.0.1:8000`
 ```bash
 cd frontend
 npm run dev
+cd ..
 ```
+npm run frontend/dev
 
 El servidor quedará corriendo en: `http://localhost:5173`
 
@@ -158,3 +161,9 @@ php artisan serve        # Terminal 1
 cd ../frontend
 npm run dev              # Terminal 2
 ```
+
+
+# Ejecucion:
+
+php /backend/artisan serve
+
