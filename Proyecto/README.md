@@ -161,7 +161,7 @@ php artisan serve        # Terminal 1
 cd ../frontend
 npm run dev              # Terminal 2
 ```
-
+#test
 
 # Ejecucion:
 
