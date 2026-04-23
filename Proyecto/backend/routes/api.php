@@ -20,6 +20,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/citas/{id}/cancelar',[AppointmentController::class, 'cancelar']);
 
     // Solo doctor
+    Route::get('/doctores', function () {return \App\Models\Doctor::all(); });
     Route::get('/citas/todas',           [AppointmentController::class, 'todasLasCitas']);
     Route::put('/citas/{id}/estado',     [AppointmentController::class, 'cambiarEstado']);
 });

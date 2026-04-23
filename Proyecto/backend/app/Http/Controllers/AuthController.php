@@ -41,29 +41,31 @@ public function register(Request $request)
     ], 201);
 }
     // Inicio de sesión
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required',
-        ]);
+public function login(Request $request)
+{
+    $request->validate([
+        'email'    => 'required|email',
+        'password' => 'required',
+    ]);
 
-        $user = User::where('email', $request->email)->first();
+    $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json([
-                'mensaje' => 'Credenciales incorrectas',
-            ], 401);
-        }
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
+    if (!$user || !Hash::check($request->password, $user->password)) {
         return response()->json([
-            'mensaje' => 'Inicio de sesión exitoso',
-            'token'   => $token,
-            'user'    => $user,
-        ]);
+            'mensaje' => 'Credenciales incorrectas',
+        ], 401);
     }
+
+    $user->tokens()->delete();
+
+    $token = $user->createToken('auth_token')->plainTextToken;
+
+    return response()->json([
+        'mensaje' => 'Inicio de sesión exitoso',
+        'token'   => $token,
+        'user'    => $user,
+    ]);
+}
 
     // Cerrar sesión
     public function logout(Request $request)
